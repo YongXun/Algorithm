@@ -28,5 +28,3 @@ var mergeTwoLists = function(l1, l2) {
         return l2;
     }
 };
-
-// 迭代
