@@ -1,37 +1,67 @@
 // k个一组翻转链表
 
-const myReverse = (head, tail) => {
-    let prev = tail.next;
-    let p = head;
-    while (prev !== tail) {
-        const nex = p.next;
-        p.next = prev;
-        prev = p;
-        p = nex;
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} k
+ * @return {ListNode}
+ */
+const reverse = (head,tail) => {
+    //头节点为head且链表长度为k，进行链表的反转
+    //生成反转后的头节点
+    let rHead = tail.next;
+    //生成反转后的尾节点
+    const rTail = head;
+    //生成移动节点
+    let cur = head;
+    //生成哨兵节点
+    let solider;
+    while(rHead !== tail){
+        solider = cur.next;
+        cur.next = rHead;
+        rHead = cur;
+        cur = solider;
     }
-    return [tail, head];
+    //返回反转后的头节点和尾节点
+    return [rHead,rTail]
 }
-var reverseKGroup = function(head, k) {
-    const hair = new ListNode(0);
-    hair.next = head;
-    let pre = hair;
 
-    while (head) {
-        let tail = pre;
-        // 查看剩余部分长度是否大于等于 k
-        for (let i = 0; i < k; ++i) {
+const reverseKGroup = (head, k) => {
+    //创建虚拟节点
+    let node = new ListNode(0);
+    node.next = head;
+    //创建移动节点
+    let cur = head;
+    //创建尾节点
+    let tail = head;
+    //创建哨兵节点用于接回每次局部反转的链表
+    let solider = node;
+    while(cur){
+        // 查看剩余部分长度是否大于等于K
+        for(let i = 1;i < k;i++){
             tail = tail.next;
-            if (!tail) {
-                return hair.next;
+            if(tail === null){
+                return node.next;
             }
         }
-        const nex = tail.next;
-        [head, tail] = myReverse(head, tail);
-        // 把子链表重新接回原链表
-        pre.next = head;
-        tail.next = nex;
-        pre = tail;
-        head = tail.next;
+        //记录当前K个几点后的节点
+        const next = tail.next;
+        //局部链表反转
+        [cur,tail] = reverse(cur,tail);
+        //收回局部链表
+        solider.next = cur;
+        tail.next = next;
+        //哨兵后移，用于下次接收
+        solider = tail;
+        //移动节点后移，用于下次反转
+        tail = next;
+        cur = next;
     }
-    return hair.next;
-};
+    return node.next;
+}
