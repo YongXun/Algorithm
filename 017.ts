@@ -1,65 +1,63 @@
+// 剑指 Offer 32 - II. 从上到下打印二叉树 II
+// 从上到下按层打印二叉树，同一层的节点按从左到右的顺序打印，每一层打印到一行。
+
+ 
+
+// 例如:
+// 给定二叉树: [3,9,20,null,null,15,7],
+
+//     3
+//    / \
+//   9  20
+//     /  \
+//    15   7
+// 返回其层次遍历结果：
+
+// [
+//   [3],
+//   [9,20],
+//   [15,7]
+// ]
+
 /**
-买卖股票的最佳时机
-
-给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
-
-如果你最多只允许完成一笔交易（即买入和卖出一支股票一次），设计一个算法来计算你所能获取的最大利润。
-
-注意：你不能在买入股票前卖出股票。
-
-示例 1:
-
-输入: [7,1,5,3,6,4]
-输出: 5
-解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
-     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。
-示例 2:
-
-输入: [7,6,4,3,1]
-输出: 0
-解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
-
-来源：力扣（LeetCode）
-链接：https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock
-著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
-**/
-
-//plan A
-function maxProfit(prices: number[]): number {
-    //迭代中实时记录最小价格
-    let minPrice : number = prices[0];
-    
-    const dp : number[] = Array(prices.length);
-
-    console.log(dp)
-
-    dp[0] = 0;
-
-    for(let i = 1; i < prices.length; i++){
-        console.log(`当前为第${i}天，前一天所能达到的最大收益为${dp[i-1]},今天价格为${prices[i]}，目前最小价格为${minPrice}，若今天卖出能达到的收益为${prices[i]-minPrice}`)
-        dp[i] = Math.max(dp[i-1],prices[i]-minPrice);
-        console.log(`综上所述,今日所能达到最大收益为${dp[i]}`,dp)
-        minPrice = Math.min(prices[i],minPrice);
+ * Definition for a binary tree node. */
+class TreeNode {
+    val: number
+    left: TreeNode | null
+    right: TreeNode | null
+    constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+        this.val = (val===undefined ? 0 : val)
+        this.left = (left===undefined ? null : left)
+        this.right = (right===undefined ? null : right)
     }
+}
 
-    return Math.max(dp[prices.length-1],0);
-};
 
-// console.log(maxProfit([7,1,5,3,6,4]),maxProfit([7,6,4,3,1]))
+function levelOrder(root: TreeNode | null): number[][] {
 
-//planB 减小内存消耗
-function planB(prices: number[]): number {
-    //迭代中实时记录最小价格
-    let minPrice : number = prices[0];
-    
-    let dp = 0;
+    if(!root){return [];}
 
-    for(let i = 1; i < prices.length; i++){
-        dp = Math.max(dp,prices[i]-minPrice);
-        minPrice = Math.min(prices[i],minPrice);
+    const queue = [root];
+    const result = [];
+    let level = 0;
+
+    while(queue.length){
+        //初始化第level层
+        result[level] = [];
+
+        //记录第level层有多少节点
+        let nodeNum = queue.length;
+        
+        while(nodeNum){
+            let node = queue.shift();
+            result[level].push(node.val);
+            if(node.left){queue.push(node.left)};
+            if(node.right){queue.push(node.right)};
+            nodeNum--;
+        }
+        
+        level++;
     }
-
-    return Math.max(dp,0);
+    
+    return result;
 };
-
-console.log(planB([7,1,5,3,6,4]),planB([7,6,4,3,1]))
